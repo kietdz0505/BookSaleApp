@@ -1,0 +1,31 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Thông tin khách hàng{% endblock %}
+
+{% block content %}
+
+<h1 class="text-center text-danger"><b>Thông tin khách hàng </b> </h1>
+<br>
+<div class="flex container">
+    <div style="width: 400px; height: 400px">
+        {% if user.avatar and user.avatar.startswith('https') %}
+        <img class="img-fluid rounded-circle" style="width: 100%; height: 100%;" src="{{user.avatar}}" alt="Card image">
+        {% else %}
+        <img style="width: 100%; height: 100%;" src="{{ url_for('static', filename='images/default-avatar-user.jpg') }}" alt="user" class="img-fluid rounded-circle">
+        {%endif%}
+    </div>
+  <div style="margin-left: 3rem;">
+    <h4>Họ và tên: <b>{{user.name}}</b></h4>
+      <p>Mã KH: <b>{{user.id}}</b></p>
+    <p>Email: <b>{{user.email}}</b> </p>
+      {% if user.active %}
+       <p>Trạng thái: <b>Đang kích hoạt</b></p>
+      {% else %}
+       <p>Trạng thái: <b>Chưa kích hoạt</b></p>
+      {% endif %}
+
+    <p>Ngày đăng ký: <b>{{user.joined_date}}</b> </p>
+  </div>
+</div>
+<br><br>
+{% endblock %}

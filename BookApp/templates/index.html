@@ -1,0 +1,48 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+
+{%if products %}
+    {% if pages > 1 %}
+    <ul class="pagination" style="display: flex;justify-content: center;">
+        {% for idx in range(1, pages+1) %}
+        <li class="page-item"><a class="page-link" href="{{ url_for('home', category_id=current_category , page=idx ) }}">{{ idx }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endif %}
+    <div class="row">
+        {% if products %}
+        {% for p in products %}
+        <div class="col-md-3 col-xs-12" style="padding: 5px;">
+            <div class="card" style="padding: 5px;  margin-bottom: 20px; margin-right: 15px;box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                <img class="card-img-top" src="{{p.image}}" alt="{{p.name}}">
+                <div class="card-body">
+                    <h6 class="card-title">{{p.name}}</h6>
+                    <p class="card-text text-danger"><b style="font-size: x-large;">{{ "{:,.0f}".format(p.price).replace(",", ".")}} VNĐ</b></p>
+                    <a href="#"
+                       class="btn btn-outline-danger"
+                       onclick="addToCart({{ p.id }}, '{{ p.name }}', {{ p.price }})" >Đặt hàng</a>
+                    <a href="{{url_for('product_detail', product_id=p.id)}}"
+                       class="btn btn-outline-primary">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <b>Không có sản phẩm nào</b>
+        {%endif%}
+    </div>
+<br>
+{%if products %}
+    {% if pages > 1 %}
+    <ul class="pagination" style="display: flex;justify-content: center;">
+        {% for idx in range(1, pages+1) %}
+        <li class="page-item"><a class="page-link" href="{{ url_for('home', category_id=current_category , page=idx ) }}">{{ idx }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+{% endif %}
+{% endblock %}

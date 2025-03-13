@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-sm bg-light fixed-top">
+    <div>
+        <a class="navbar-brand" href="#"><img src="/static/images/logo.jpg" alt="Avatar Logo" style="width:60px;"
+                                              class="rounded-pill"></a>
+    </div>
+    <div class="container-fluid">
+
+        <ul class="navbar-nav">
+            <!-- Trang chủ -->
+            <li class="nav-item">
+                <a class="nav-link {% if not current_category %}active{% endif %}" href="/"><b>Trang chủ</b></a>
+            </li>
+
+            <!-- Các danh mục chính -->
+            {% for c in visible_categories %}
+            <li class="nav-item">
+                <a class="nav-link {% if c.id == current_category %}active{% endif %}" href="{{ url_for('home', category_id=c.id) }}"><b>{{ c.name }}</b></a>
+            </li>
+            {% endfor %}
+
+            <!-- Dropdown cho danh mục còn lại -->
+            {% if dropdown_categories %}
+            <li class="nav-item dropdown">
+                <a style="font-weight: bold;" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Danh mục khác
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for c in dropdown_categories %}
+                    <li>
+                        <a style="font-weight: bold;" class="dropdown-item {% if c.id == current_category %}active{% endif %}" href="{{ url_for('home', category_id=c.id) }}">{{ c.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
+                {% endif %}
+        </ul>
+
+        <form class="d-flex" style="margin-right: 3rem;">
+            <input class="form-control me-2" type="text" name="keyword" placeholder="Nhập từ khóa...">
+            <button class="btn btn-primary" type="submit" style="width: 8rem;">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <div class="display-flex" style="align-items: center;">
+        <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"><span style="color:red;" class="badge badge-info cart-counter">{{ cart_stats.total_quantity }}</span></i></a>
+        {% if current_user.is_authenticated %}
+            <a style="text-decoration: none; color: black;" href="{{ url_for('user_info') }}">
+                {% if current_user.avatar %}
+                  <img class="rounded-circle" src="{{ current_user.avatar }}" width="40px" alt="{{ current_user.name }}">
+                {% else %}
+                <img class="rounded-circle" width="40px" src="{{ url_for('static', filename='images/default-avatar-user.jpg') }}" alt="current_user.name">
+                {% endif %}
+                <p style="font-size: 10px;">{{ current_user.name }}</p>
+            </a>
+            <a href="{{ url_for('user_signout') }}"><button type="button" class="btn btn-outline-success"><b>Đăng xuất</b></button></a>
+        {% else %}
+        <a href="{{ url_for('user_register') }}"><button type="button" class="btn btn-outline-success"><b>Đăng ký</b></button></a>
+        <a href="{{ url_for('user_signin') }}"><button type="button" class="btn btn-outline-primary"><b>Đăng nhập</b></button></a>
+        {% endif %}
+    </div>
+
+</nav>

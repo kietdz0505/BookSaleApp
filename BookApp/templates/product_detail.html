@@ -1,0 +1,81 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Chi tiết sản phẩm{% endblock %}
+
+{% block content %}
+<h1 class="text-center text-info"><b>{{ product.name }}</b></h1>
+<br><br>
+<div class="flex container">
+    <div>
+        <img src="{{ product.image }}" alt="{{product.name}}">
+    </div>
+    <div>
+        <h2><b>Thông tin chi tiết:</b></h2>
+        <br>
+        <p><b>Mã sách:</b> {{ product.id }}</p>
+        {% set description_limit = 255 %}
+        <p><b>
+            Mô tả:</b>
+            {% if product.description|length > description_limit %}
+                <span style="font-size: 0.8rem;" id="short-description">{{ product.description[:description_limit] }}...</span>
+                <span  id="full-description" style="display:none;font-size: 0.8rem;">{{ product.description }}</span>
+                <a href="#" id="read-more" onclick="toggleDescription(event)">Xem thêm</a>
+            {% else %}
+                {{ product.description }}
+            {% endif %}
+        </p>
+        <p><b>Tác giả:</b> {{ product.author.first_name }} {{ product.author.last_name }}</p>
+        <p><b>Nhà xuất bản:</b> {{ product.publisher }}</p>
+         <p><b>Hàng tồn:</b> {{ product.quantity }} bản</p>
+        <h4 class="text-danger"><b>Giá: {{ "{:,.0f}".format(product.price).replace(",", ".") }} VND</b></h4>
+        <br>
+        <a href="#" class="btn btn-outline-danger" onclick="addToCart({{ product.id }}, '{{ product.name }}', {{ product.price }})" >Đặt hàng</a>
+    </div>
+</div>
+<hr>
+{% if current_user.is_authenticated %}
+<div>
+    <div class="form-group">
+        <textarea class="form-control" id="commentId" placeholder="Nhập nội dung bình luận..."></textarea>
+    </div>
+    <br>
+    <input type="button" value="Bình luận" onclick="addComment({{ product.id }})" class="btn btn-primary">
+</div>
+{% else %}
+<a href="{{ url_for('user_signin') }}">Đăng nhập để bình luận</a>
+{% endif %}
+<br><br>
+<div id="commentArea">
+    {% for c in comments %}
+    <div class="row">
+        <div class="col-md-1 col-xs-4">
+            {% if c.user.avatar and c.user.avatar.startswith('https') %}
+                <img src="{{c.user.avatar}}" alt="" class="img-fluid rounded-circle">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/default-avatar-user.jpg') }}" alt="user" class="img-fluid rounded-circle">
+            {%endif%}
+        </div>
+        <div class="col-md-11 col-xs-8">
+            <b>{{ c.user.name }}</b>
+            <p>{{ c.content }}</p>
+            <p style="font-size: 10px;"><em class="my-date">{{ c.created_date }}</em></p>
+        </div>
+    </div>
+    {%endfor%}
+</div>
+{% if pages > 1 %}
+    <ul class="pagination" style="display: flex;justify-content: center;">
+        {% for idx in range(1, pages+1) %}
+        <li class="page-item"><a class="page-link" href="{{ url_for('product_detail', product_id=product.id ,page=idx) }}">{{ idx }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<script>
+    window.onload = function() {
+        let d = document.getElementsByClassName('my-date')
+        for( let i = 0 ; i < d.length ; i++ )
+            d[i].innerText = moment(d[i].innerText).locale('vi').fromNow();
+    }
+
+</script>
+{% endblock %}
